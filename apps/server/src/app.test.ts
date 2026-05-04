@@ -17,7 +17,7 @@ interface LogRecord {
 }
 
 const SERVER_ENV = {
-  BETTER_AUTH_SECRET: "aR817loRgXzsy1pwlCkWkETeiovbipcd",
+  BETTER_AUTH_SECRET: "replace-me-with-a-32-char-test-secret",
   BETTER_AUTH_URL: "http://localhost:4000",
   CORS_ORIGIN: "http://localhost:3000",
   DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/finance_manager",

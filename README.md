@@ -155,6 +155,9 @@ The smoke suite covers:
 - login/signup route navigation
 - unauthenticated dashboard redirect to login
 
+Local GitHub Actions workflow runs with `act` are documented in
+[docs/github-actions-with-act.md](docs/github-actions-with-act.md).
+
 If Playwright cannot launch Chromium, install the browser and OS dependencies:
 
 ```bash
