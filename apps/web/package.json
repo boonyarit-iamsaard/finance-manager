@@ -13,7 +13,6 @@
   "dependencies": {
     "@finance-manager/env": "workspace:*",
     "@finance-manager/ui": "workspace:*",
-    "@hookform/resolvers": "^5.2.2",
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/react-form": "^1.28.0",
     "@tanstack/react-router": "^1.168.22",

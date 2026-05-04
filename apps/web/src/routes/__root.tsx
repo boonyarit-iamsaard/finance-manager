@@ -1,4 +1,5 @@
 import { Toaster } from "@finance-manager/ui/components/sonner";
+import { TooltipProvider } from "@finance-manager/ui/components/tooltip";
 import {
   createRootRouteWithContext,
   HeadContent,
@@ -6,7 +7,6 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
 
 import "../index.css";
@@ -17,20 +17,13 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
   component: RootComponent,
   head: () => ({
     meta: [
-      {
-        title: "finance-manager",
-      },
+      { title: "Finance Manager" },
       {
         name: "description",
-        content: "finance-manager is a web application",
+        content: "Take control of your personal finances.",
       },
     ],
-    links: [
-      {
-        rel: "icon",
-        href: "/favicon.ico",
-      },
-    ],
+    links: [{ rel: "icon", href: "/favicon.ico" }],
   }),
 });
 
@@ -44,11 +37,10 @@ function RootComponent() {
         disableTransitionOnChange
         storageKey="vite-ui-theme"
       >
-        <div className="grid h-svh grid-rows-[auto_1fr]">
-          <Header />
+        <TooltipProvider>
           <Outlet />
-        </div>
-        <Toaster richColors />
+          <Toaster richColors />
+        </TooltipProvider>
       </ThemeProvider>
       <TanStackRouterDevtools position="bottom-left" />
     </>
