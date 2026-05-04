@@ -1,0 +1,30 @@
+name: finance-manager
+
+services:
+  postgres:
+    image: docker.io/postgres:18-alpine
+    container_name: finance-manager-postgres
+    environment:
+      POSTGRES_DB: finance_manager
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+    networks:
+      - finance-manager-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+    name: finance-manager-pgdata
+
+networks:
+  finance-manager-network:
+    name: finance-manager-network

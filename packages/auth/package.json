@@ -1,0 +1,24 @@
+{
+  "name": "@finance-manager/auth",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@finance-manager/db": "workspace:*",
+    "@finance-manager/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@finance-manager/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

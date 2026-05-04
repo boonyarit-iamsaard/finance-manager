@@ -1,0 +1,57 @@
+{
+  "name": "finance-manager",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "catalog": {
+      "dotenv": "^17.2.2",
+      "zod": "^4.1.13",
+      "typescript": "^6",
+      "@types/bun": "^1.3.4",
+      "better-auth": "1.6.9",
+      "next-themes": "^0.4.6",
+      "@types/react-dom": "^19.2.3"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "types:check": "turbo types:check",
+    "dev:web": "turbo -F web dev",
+    "dev:server": "turbo -F server dev",
+    "db:push": "turbo -F @finance-manager/db db:push",
+    "db:studio": "turbo -F @finance-manager/db db:studio",
+    "db:generate": "turbo -F @finance-manager/db db:generate",
+    "db:migrate": "turbo -F @finance-manager/db db:migrate",
+    "db:start": "turbo -F @finance-manager/db db:start",
+    "db:watch": "turbo -F @finance-manager/db db:watch",
+    "db:stop": "turbo -F @finance-manager/db db:stop",
+    "db:down": "turbo -F @finance-manager/db db:down",
+    "check": "biome check --write .",
+    "prepare": "command -v husky >/dev/null 2>&1 && husky && printf 'bun x lint-staged\n' > .husky/pre-commit || true"
+  },
+  "dependencies": {
+    "@finance-manager/env": "workspace:*",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.0",
+    "@finance-manager/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "turbo": "^2.8.12",
+    "typescript": "catalog:"
+  },
+  "lint-staged": {
+    "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,css}": [
+      "biome check --files-ignore-unknown=true"
+    ]
+  },
+  "packageManager": "bun@1.3.13"
+}
