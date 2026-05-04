@@ -1,27 +1,54 @@
-import { auth } from "@finance-manager/auth";
 import { env } from "@finance-manager/env/server";
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { logger } from "hono/logger";
 
-const app = new Hono();
+import { createApp } from "./app";
+import { logger } from "./lib/logger";
 
-app.use(logger());
-app.use(
-  "/*",
-  cors({
-    origin: env.CORS_ORIGIN,
-    allowMethods: ["GET", "POST", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  }),
+let fatalHandlersRegistered = false;
+
+function registerFatalHandlers() {
+  if (fatalHandlersRegistered) {
+    return;
+  }
+
+  process.on("uncaughtException", (error) => {
+    logger.fatal(
+      {
+        event: "process.uncaught_exception",
+        err: error,
+      },
+      "uncaught exception",
+    );
+    process.exit(1);
+  });
+
+  process.on("unhandledRejection", (reason) => {
+    const error = reason instanceof Error ? reason : new Error(String(reason));
+
+    logger.fatal(
+      {
+        event: "process.unhandled_rejection",
+        err: error,
+      },
+      "unhandled rejection",
+    );
+    process.exit(1);
+  });
+
+  fatalHandlersRegistered = true;
+}
+
+registerFatalHandlers();
+
+const app = createApp();
+
+logger.info(
+  {
+    event: "server.started",
+    node_env: env.NODE_ENV,
+    port: env.PORT,
+  },
+  "server started",
 );
-
-app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
-
-app.get("/", (c) => {
-  return c.text("OK");
-});
 
 export default {
   port: env.PORT,
