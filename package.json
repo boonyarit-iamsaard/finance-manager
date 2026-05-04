@@ -33,6 +33,9 @@
     "dev:server": "turbo -F server dev",
     "dev:web": "turbo -F web dev",
     "prepare": "command -v husky >/dev/null 2>&1 && husky && printf 'bun x lint-staged\n' > .husky/pre-commit || true",
+    "test": "turbo test",
+    "test:e2e:web": "turbo -F web test:e2e",
+    "test:web": "turbo -F web test",
     "types:check": "turbo types:check"
   },
   "dependencies": {

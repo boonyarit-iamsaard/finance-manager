@@ -1,105 +1,196 @@
-# finance-manager
+# Finance Manager
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines React, TanStack Router, Hono, and more.
+A personal finance manager built as a TypeScript monorepo. The app currently includes a React web client, a Hono API server, Better Auth authentication, shared UI primitives, and a PostgreSQL database managed with Drizzle.
 
-## Features
+## Stack
 
-- **TypeScript** - For type safety and improved developer experience
-- **TanStack Router** - File-based routing with full type safety
-- **TailwindCSS** - Utility-first CSS for rapid UI development
-- **Shared UI package** - shadcn/ui primitives live in `packages/ui`
-- **Hono** - Lightweight, performant server framework
-- **Bun** - Runtime environment
-- **Drizzle** - TypeScript-first ORM
-- **PostgreSQL** - Database engine
-- **Authentication** - Better-Auth
-- **Biome** - Linting and formatting
-- **Husky** - Git hooks for code quality
-- **Turborepo** - Optimized monorepo build system
+- Bun for package management and runtime
+- Turborepo for workspace task orchestration
+- React, Vite, and TanStack Router for `apps/web`
+- Hono for `apps/server`
+- Better Auth for authentication
+- PostgreSQL and Drizzle for persistence
+- Tailwind CSS and shared shadcn-style primitives in `packages/ui`
+- Biome for formatting and linting
+- Vitest, Testing Library, and Playwright for web testing
 
-## Getting Started
+## Repository Layout
 
-First, install the dependencies:
+```text
+finance-manager/
+├── apps/
+│   ├── server/      # Hono API server
+│   └── web/         # React frontend
+├── packages/
+│   ├── auth/        # Better Auth setup
+│   ├── config/      # Shared TypeScript config
+│   ├── db/          # Drizzle schema and database scripts
+│   ├── env/         # Environment validation
+│   └── ui/          # Shared UI components and styles
+```
+
+## Prerequisites
+
+- Bun `1.3.13`
+- Docker, for the local PostgreSQL container
+- Playwright browser dependencies, if you want to run browser smoke tests locally
+
+## First Run
+
+Install dependencies:
 
 ```bash
 bun install
 ```
 
-## Database Setup
+Create local environment files:
 
-This project uses PostgreSQL with Drizzle ORM.
+```bash
+cp apps/server/.env.example apps/server/.env
+cp apps/web/.env.example apps/web/.env
+```
 
-1. Make sure you have a PostgreSQL database set up.
-2. Update your `apps/server/.env` file with your PostgreSQL connection details.
+Start PostgreSQL:
 
-3. Apply the schema to your database:
+```bash
+bun run db:start
+```
+
+Apply the current schema:
 
 ```bash
 bun run db:push
 ```
 
-Then, run the development server:
+Start the web and server apps:
 
 ```bash
 bun run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser to see the web application.
-The API is running at [http://localhost:3000](http://localhost:3000).
+Default local URLs:
 
-## UI Customization
+- Web: <http://localhost:3000>
+- Server: <http://localhost:4000>
+- Database: `postgresql://postgres:postgres@localhost:5432/finance_manager`
 
-React web apps in this stack share shadcn/ui primitives through `packages/ui`.
+## Development Commands
 
-- Change design tokens and global styles in `packages/ui/src/styles/globals.css`
-- Update shared primitives in `packages/ui/src/components/*`
-- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/web/components.json`
-
-### Add more shared components
-
-Run this from the project root to add more primitives to the shared UI package:
+Run everything in development mode:
 
 ```bash
-npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
+bun run dev
 ```
 
-Import shared components like this:
+Run one app:
+
+```bash
+bun run dev:web
+bun run dev:server
+```
+
+Build all workspaces:
+
+```bash
+bun run build
+```
+
+Format and lint:
+
+```bash
+bun run check
+```
+
+Type-check all workspaces:
+
+```bash
+bun run types:check
+```
+
+Run the full project CI-style check:
+
+```bash
+bun run ci:check
+```
+
+## Database Commands
+
+```bash
+bun run db:start      # start local PostgreSQL
+bun run db:stop       # stop local PostgreSQL
+bun run db:down       # remove local PostgreSQL container/network
+bun run db:push       # push schema changes
+bun run db:generate   # generate Drizzle migrations
+bun run db:migrate    # run Drizzle migrations
+bun run db:studio     # open Drizzle Studio
+```
+
+Database configuration is read from `apps/server/.env`.
+
+## Testing
+
+Run the web unit/component suite:
+
+```bash
+bun run test:web
+```
+
+The current Vitest coverage focuses on the behavior that exists today:
+
+- auth schema validation
+- login and signup form rendering
+- pending session state
+- invalid submit blocking
+- successful auth callbacks, navigation, and toast side effects
+
+Run Playwright smoke tests:
+
+```bash
+bun run test:e2e:web
+```
+
+The smoke suite covers:
+
+- public home page call to action
+- login/signup route navigation
+- unauthenticated dashboard redirect to login
+
+If Playwright cannot launch Chromium, install the browser and OS dependencies:
+
+```bash
+bunx playwright install chromium
+bunx playwright install-deps chromium
+```
+
+`install-deps` may require sudo on Linux.
+
+On Ubuntu, if you prefer to fix missing Chromium libraries one at a time, these packages resolved the local setup used for this repo:
+
+```bash
+sudo apt install libnspr4 libnss3 libasound2t64 libasound2-data
+```
+
+If Chromium fails with an ALSA symbol error like `snd_device_name_get_hint`, make sure `libasound.so.2` is provided by Ubuntu's ALSA package:
+
+```bash
+dpkg -S /usr/lib/x86_64-linux-gnu/libasound.so.2
+```
+
+Expected output should reference `libasound2t64`, not `liboss4-salsa-asound2`.
+
+## UI Package
+
+Shared components live in `packages/ui` and are imported by apps through the workspace alias:
 
 ```tsx
 import { Button } from "@finance-manager/ui/components/button";
 ```
 
-### Add app-specific blocks
+Use shared primitives for reusable UI. Keep app-specific page and feature components inside the app that owns them.
 
-If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
+## Notes
 
-## Git Hooks and Formatting
-
-- Initialize hooks: `bun run prepare`
-- Format and lint fix: `bun run check`
-
-## Project Structure
-
-```
-finance-manager/
-├── apps/
-│   ├── web/         # Frontend application (React + TanStack Router)
-│   └── server/      # Backend API (Hono)
-├── packages/
-│   ├── ui/          # Shared shadcn/ui components and styles
-│   ├── auth/        # Authentication configuration & logic
-│   └── db/          # Database schema & queries
-```
-
-## Available Scripts
-
-- `bun run dev`: Start all applications in development mode
-- `bun run build`: Build all applications
-- `bun run dev:web`: Start only the web application
-- `bun run dev:server`: Start only the server
-- `bun run types:check`: Check TypeScript types across all apps
-- `bun run db:push`: Push schema changes to database
-- `bun run db:generate`: Generate database client/types
-- `bun run db:migrate`: Run database migrations
-- `bun run db:studio`: Open database studio UI
-- `bun run check`: Run Biome formatting and linting
+- `apps/web` runs on port `3000`.
+- `apps/server` runs on port `4000`.
+- The generated TanStack Router tree is excluded from Biome checks.
+- Playwright tests intentionally mock the auth session endpoint so browser smoke tests do not require the API or database to be running.
